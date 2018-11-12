@@ -1,21 +1,24 @@
 import pika
 
 class Node():
-	def __init__(self, number, parent, token):
+	def __init__(self, number, holder, queue = [], using = False):
 		self.number = number
-		self.parent = parent
-		self.token  = token
+		self.holder = holder
+		self.queue  = queue
+		self.using  = using 
 
 #Getters -------------------------------------------------------
 	def get_number(self):
 		return self.number
 
-	def has_token(self):
-		return self.token
+	def get_holder(self):
+		return self.holder
 
-	def get_queue_to_ask(self):
-		return self.parent
+	def get_queue(self):
+		return self.queue
 
+	def is_using(self):
+		return self.using
 #Methods -------------------------------------------------------
 	def init_queue(self):
 		connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
