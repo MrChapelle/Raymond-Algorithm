@@ -61,10 +61,15 @@ class Node():
 			holder = self.get_holder()
 			number = self.get_number()
 			body = "REQUEST TOKEN from node " + str(number)
-			self.send_message('localhost', str(holder), str(body))
+			connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+			channel    = connection.channel()
+			channel.basic_publish(exchange='',
+                      			routing_key=str(holder),
+                      			body=body)
+			print(" [x] Sent " + body + " to queue " + str(holder))
+			connection.close()
 			self.add_elem_queue(number)
 			self.asked = True
-			print("Node number " + str(number) + "ask token to node " + str(holder))
 
 	def transfer_token_request(self, asker):
 		"""
