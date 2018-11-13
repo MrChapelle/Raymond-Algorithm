@@ -43,6 +43,15 @@ class Node():
 		connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 		channel    = connection.channel()
 		channel.queue_declare(queue = str(self.get_number))
+		#Cyril
+		def callback(ch, method, properties, body):
+			#Faire ici dans le callback les différents cas de figures selon le contenu du message et l'état du noeud
+    		print(" [x] Received %r" % body)
+
+		channel.basic_consume(callback, queue=str(self.get_number), no_ack=True)
+		print(' [*] Waiting for messages. To exit press CTRL+C')
+		channel.start_consuming()
+		#EndCyril
 
 	def ask_token(self):
 		if has_token(self):

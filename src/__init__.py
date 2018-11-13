@@ -24,3 +24,6 @@ if __name__ == '__main__':
 
 	#Queue Initialization
 	init_system()
+
+	#Pour qu'un noeud souhaite entrer en fonction critique...il faudrait qu'un élément extérieur, c'est à dire nous les dvpeurs, envoient un message spécifique
+	#que le noeud interpretera comme, "je veux entrer en section critique"
