@@ -8,7 +8,7 @@ class Node():
 		self.using  = using 
 		self.asked  = asked
 
-#Getters -------------------------------------------------------
+#Getters and basic functions-------------------------------------
 	def get_number(self):
 		return self.number
 
@@ -24,8 +24,10 @@ class Node():
 	def has_token(self):
 		return self.number == self.holder
 
+	def add_elem_queue(self, elem):
+		self.queue.append(elem)
 
-#Methods -------------------------------------------------------
+	#Methods -------------------------------------------------------
 	
 	def start_using(self):
 		if has_token(self) :
@@ -39,31 +41,59 @@ class Node():
 		else :
 			print("You are not in critical section because you are not the root or not using the token")	
 
+	def send_message(connect, queue, body):
+		connection = pika.BlockingConnection(pika.ConnectionParameters(connect))
+		channel    = connection.channel()
+		channel.basic_publish(exchange='',
+                      		routing_key=queue,
+                      		body=body)
+		print(" [x] Sent " + body + "to queue " + queue)
+		connection.close()
+
+	def ask_token_request(self):
+		"""
+		Function used by a node to ask the token
+		It is used by the first node (5)
+		"""
+		if self.has_token():
+			print("You already have the token")
+		else :
+			holder = self.get_holder()
+			number = self.get_number()
+			body = "REQUEST TOKEN from node " + str(number)
+			self.send_message('localhost', str(holder), str(body))
+			self.add_elem_queue(number)
+			self.asked = True
+			print("Node number " + str(number) + "ask token to node " + str(holder))
+
+	def transfer_token_request(self, asker):
+		"""
+		Function used by a node to transfer the ask token request to 
+		his parent (ex: 3 -> 2)
+		"""
+		holder = self.get_holder()
+		number = self.get_number()
+		body = "REQUEST TOKEN from node " + str(number)
+		send_message('localhost', str(holder), body)
+		add_elem_queue(asker)
+		self.asked = True			
+
+	def send_token(self):
+		if not has_token(self) or is_using(self):
+			print("You can't send the token, you don't hold it or you're still using it")
+		else:
+			print("to implement")
+
+	# Init ------------------------------------------------------------------------------			
+
 	def init_queue(self):
 		connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 		channel    = connection.channel()
 		channel.queue_declare(queue = str(self.get_number))
-		#Cyril
 		def callback(ch, method, properties, body):
 			#Faire ici dans le callback les différents cas de figures selon le contenu du message et l'état du noeud
-    		print(" [x] Received %r" % body)
+			print(" [x] Received %r" % body)
 
 		channel.basic_consume(callback, queue=str(self.get_number), no_ack=True)
 		print(' [*] Waiting for messages. To exit press CTRL+C')
 		channel.start_consuming()
-		#EndCyril
-
-	def ask_token(self):
-		if has_token(self):
-			print("You already have the token")
-		else :
-			queue_to_ask = self.get_queue_to_ask()
-			if queue_to_ask == None :
-				print("You are the root")
-			else :
-				print("to continue")
-
-	def get_request(self):
-		print("to continue")
-
-
