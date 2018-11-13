@@ -10,3 +10,4 @@ Node_4 = Node(4, 3)
 Node_5 = Node(5, 3)
 
 Node_5.ask_token_request()
+print(Node_5.queue)

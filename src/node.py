@@ -41,15 +41,6 @@ class Node():
 		else :
 			print("You are not in critical section because you are not the root or not using the token")	
 
-	def send_message(connect, queue, body):
-		connection = pika.BlockingConnection(pika.ConnectionParameters(connect))
-		channel    = connection.channel()
-		channel.basic_publish(exchange='',
-                      		routing_key=queue,
-                      		body=body)
-		print(" [x] Sent " + body + "to queue " + queue)
-		connection.close()
-
 	def ask_token_request(self):
 		"""
 		Function used by a node to ask the token
@@ -61,6 +52,7 @@ class Node():
 			holder = self.get_holder()
 			number = self.get_number()
 			body = "REQUEST TOKEN from node " + str(number)
+
 			connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 			channel    = connection.channel()
 			channel.basic_publish(exchange='',
@@ -68,6 +60,7 @@ class Node():
                       			body=body)
 			print(" [x] Sent " + body + " to queue " + str(holder))
 			connection.close()
+			
 			self.add_elem_queue(number)
 			self.asked = True
 
