@@ -58,29 +58,37 @@ class Node():
 			channel.basic_publish(exchange='',
                       			routing_key=str(holder),
                       			body=body)
-			print(" [x] Sent " + body + " to queue " + str(holder))
+			print(" [*] Sent " + body + " to queue " + str(holder))
 			connection.close()
 			
 			self.add_elem_queue(number)
 			self.asked = True
 
-	def transfer_token_request(self, asker):
+	def transfer_token_request(self, requestor):
 		"""
 		Function used by a node to transfer the ask token request to 
 		his parent (ex: 3 -> 2)
 		"""
-		holder = self.get_holder()
-		number = self.get_number()
-		body = "REQUEST TOKEN from node " + str(number)
-		send_message('localhost', str(holder), body)
-		add_elem_queue(asker)
-		self.asked = True			
+		if self.has_token():
+			print("You already have the token")
+		else :
+			holder = self.get_holder()
+			number = self.get_number()
+			body = "REQUEST TOKEN from node " + str(number)
 
-	def send_token(self):
-		if not has_token(self) or is_using(self):
-			print("You can't send the token, you don't hold it or you're still using it")
-		else:
-			print("to implement")
+			connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+			channel    = connection.channel()
+			channel.basic_publish(exchange='',
+                      			routing_key=str(holder),
+                      			body=body)
+			print(" [x] Sent " + body + " to queue " + str(holder))
+			connection.close()
+			
+			self.add_elem_queue(requestor)
+			self.asked = True		
+
+	def send_token(self, requestor):
+		print("to implement")
 
 	# Init ------------------------------------------------------------------------------			
 
@@ -92,7 +100,21 @@ class Node():
 		print(" [*] Queue " + str(self.get_number()) + " started")
 		def callback(ch, method, properties, body):
 			#Faire ici dans le callback les différents cas de figures selon le contenu du message et l'état du noeud
-			print(" [x] Received %r" % body)
+			if body.count("REQUEST TOKEN".encode()):
+				requestor = int(body.replace("REQUEST TOKEN from node ".encode(),"".encode()))
+				print(" [*] Received TOKEN REQUEST from node " + str(requestor))
+				if self.has_token():
+					print(" [*] I am the holder")
+					if self.is_using():
+						print(" [*] I am not using the token")
+						self.send_token(requestor)
+					else :
+						print(" [*] I am using the token")
+				else :
+					print(" [*] I don't have the token, I transfer the REQUEST to my holder")
+					self.transfer_token_request(requestor)
+			else :
+				print(" [*] Received %r" % body)
 
 		channel.basic_consume(callback, queue=str(self.get_number()), no_ack=True)
 		print(' [*] Waiting for messages. To exit press CTRL+C')
