@@ -30,13 +30,13 @@ class Node():
 	#Methods -------------------------------------------------------
 	
 	def start_using(self):
-		if has_token(self) :
+		if self.has_token() :
 			self.using = True
 		else :
 			print("You are not the holder, you can't be in critical section")
 
 	def stop_using(self):
-		if self.using and has_token(self):
+		if self.using and self.has_token():
 			self.using = False
 		else :
 			print("You are not in critical section because you are not the root or not using the token")	
@@ -81,7 +81,7 @@ class Node():
 			channel.basic_publish(exchange='',
                       			routing_key=str(holder),
                       			body=body)
-			print(" [x] Sent " + body + " to queue " + str(holder))
+			print(" [*] Sent " + body + " to queue " + str(holder))
 			connection.close()
 			
 			self.add_elem_queue(requestor)

@@ -10,3 +10,6 @@ Node_4 = Node(4, 3)
 Node_5 = Node(5, 3)
 
 Node_5.ask_token_request()
+
+print("AFTER")
+print(Node_2.get_queue())
