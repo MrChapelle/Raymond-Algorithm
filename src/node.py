@@ -1,4 +1,5 @@
 import pika
+import time
 
 class Node():
 	def __init__(self, number, holder, queue = [], using = False, asked = False):
@@ -33,13 +34,13 @@ class Node():
 		if self.has_token() :
 			self.using = True
 		else :
-			print("You are not the holder, you can't be in critical section")
+			print(" [*] You are not the holder, you can't be in critical section")
 
 	def stop_using(self):
 		if self.using and self.has_token():
 			self.using = False
 		else :
-			print("You are not in critical section because you are not the root or not using the token")	
+			print(" [*] You are not in critical section because you are not the root or not using the token")	
 
 	def ask_token_request(self):
 		"""
@@ -47,7 +48,7 @@ class Node():
 		It is used by the first node (5)
 		"""
 		if self.has_token():
-			print("You already have the token")
+			print(" [*] You already have the token")
 		else :
 			holder = self.get_holder()
 			number = self.get_number()
@@ -85,9 +86,15 @@ class Node():
 			connection.close()
 			
 			self.add_elem_queue(requestor)
-			self.asked = True		
+			self.asked = True
+			print(" [*] Message send")
+			print(" [*] My queue :" + str(self.get_queue()))
+			print(" [*] Am I asked ? : " + str(self.asked))
 
 	def send_token(self, requestor):
+		print("to implement")
+
+	def transfer_token(self):
 		print("to implement")
 
 	# Init ------------------------------------------------------------------------------			
@@ -98,21 +105,31 @@ class Node():
 		queue = str(self.get_number())
 		channel.queue_declare(queue = queue)
 		print(" [*] Queue " + str(self.get_number()) + " started")
+
 		def callback(ch, method, properties, body):
-			#Faire ici dans le callback les différents cas de figures selon le contenu du message et l'état du noeud
 			if body.count("REQUEST TOKEN".encode()):
 				requestor = int(body.replace("REQUEST TOKEN from node ".encode(),"".encode()))
 				print(" [*] Received TOKEN REQUEST from node " + str(requestor))
+
 				if self.has_token():
 					print(" [*] I am the holder")
-					if self.is_using():
+					if not self.is_using():
 						print(" [*] I am not using the token")
 						self.send_token(requestor)
 					else :
-						print(" [*] I am using the token")
+						time = 0
+						while self.is_using() and (t <= 10):  #we simulate a using time at 10s (arbitrary)
+							print(" [*] I am using the token since " + str(time) + " seconds")
+							t += 1
+							time.sleep(1)
+						self.using = False
+						self.send_token(requestor)
+
 				else :
 					print(" [*] I don't have the token, I transfer the REQUEST to my holder")
 					self.transfer_token_request(requestor)
+			elif body.count("SEND TOKEN".encode()):
+				self.transfer_token()
 			else :
 				print(" [*] Received %r" % body)
 

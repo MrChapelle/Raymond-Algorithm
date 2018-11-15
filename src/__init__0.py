@@ -11,7 +11,7 @@ def init_system():
 if __name__ == '__main__':
 
 	# Graph Creation
-	Node_0 = Node(0, 0, [], True)
+	Node_0 = Node(0, 0, [], False)
 
 	#Queue Initialization
 	init_system()
