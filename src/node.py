@@ -117,9 +117,9 @@ class Node():
 						print(" [*] I am not using the token")
 						self.send_token(requestor)
 					else :
-						time = 0
+						t = 0
 						while self.is_using() and (t <= 10):  #we simulate a using time at 10s (arbitrary)
-							print(" [*] I am using the token since " + str(time) + " seconds")
+							print(" [*] I am using the token since " + str(t) + " seconds")
 							t += 1
 							time.sleep(1)
 						self.using = False
