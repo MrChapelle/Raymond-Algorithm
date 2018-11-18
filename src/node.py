@@ -88,7 +88,7 @@ class Node():
 			self.add_elem_queue(requestor)
 			self.asked = True
 			print(" [*] Message send")
-			print(" [*] My queue :" + str(self.queue())
+			print(" [*] My queue :" + str(self.queue()))
 			print(" [*] Am I asked ? : " + str(self.asked))
 
 	def send_token(self, requestor):
@@ -107,7 +107,7 @@ class Node():
 		#print("to implement")
 		body = "TOKEN"
 		elem = self.queue.pop(0)
-		
+
 		connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 		channel    = connection.channel()
 		channel.basic_publish(exchange='',
