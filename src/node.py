@@ -88,33 +88,42 @@ class Node():
 			self.add_elem_queue(requestor)
 			self.asked = True
 			print(" [*] Message send")
-			print(" [*] My queue :" + str(self.queue()))
+			print(" [*] My queue :" + str(self.queue))
 			print(" [*] Am I asked ? : " + str(self.asked))
+			print(" [*] My holder : " + str(self.holder))
+			print(" [*] Am I using : " + str(self.using))
 
 	def send_token(self, requestor):
-		#print("to implement")
-		body = "TOKEN"
+		if self.number == requestor :
+			print(" [*] I made the request")
+			self.holder = self.number
+			self.asked = False
+			self.using = True
+		else:
+			body = "SEND TOKEN"
 
-		connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
-		channel    = connection.channel()
-		channel.basic_publish(exchange='',
-                      routing_key=str(requestor),
-                      body=body)
-		print(" [*] Sent " + body + " to queue " + str(requestor))
-		connection.close()
+			connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+			channel    = connection.channel()
+			channel.basic_publish(exchange='',
+	                      routing_key=str(requestor),
+	                      body=body)
+			print(" [*] Sent " + body + " to queue " + str(requestor))
+			self.holder = requestor
+			self.asked = False
+			connection.close()
+		print(" [*] Message send")
+		print(" [*] My queue :" + str(self.queue))
+		print(" [*] Am I asked ? : " + str(self.asked))
+		print(" [*] My holder : " + str(self.holder))
+		print(" [*] Am I using : " + str(self.using))
 
 	def transfer_token(self):
 		#print("to implement")
-		body = "TOKEN"
-		elem = self.queue.pop(0)
-
-		connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
-		channel    = connection.channel()
-		channel.basic_publish(exchange='',
-                      routing_key=str(elem),
-                      body=body)
-		print(" [*] Sent " + body + " to queue " + str(elem))
-		connection.close()
+		try:
+			elem = self.queue.pop(0)
+			self.send_token(elem)
+		except:
+			print("Cannot pop element, queue empty")
 
 	# Init ------------------------------------------------------------------------------			
 
@@ -126,7 +135,11 @@ class Node():
 		print(" [*] Queue " + str(self.get_number()) + " started")
 
 		def callback(ch, method, properties, body):
-			if body.count("REQUEST TOKEN".encode()):
+			if body.count("REQUEST INIT".encode()):
+				print(" [*] I initialize a request ")
+				self.add_elem_queue(self.number)
+				self.asked = True
+			elif body.count("REQUEST TOKEN".encode()):
 				requestor = int(body.replace("REQUEST TOKEN from node ".encode(),"".encode()))
 				print(" [*] Received TOKEN REQUEST from node " + str(requestor))
 
@@ -137,7 +150,7 @@ class Node():
 						self.send_token(requestor)
 					else :
 						t = 0
-						while self.is_using() and (t <= 10):  #we simulate a using time at 10s (arbitrary)
+						while self.is_using() and (t <= 5):  #we simulate a using time at 10s (arbitrary)
 							print(" [*] I am using the token since " + str(t) + " seconds")
 							t += 1
 							time.sleep(1)
