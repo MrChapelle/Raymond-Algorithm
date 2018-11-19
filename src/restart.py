@@ -1,6 +1,6 @@
 from node import *
 
-def restart_node(self):
+def restart_node():
 	# we reconstruct the graph
 	node_destructed = -1
 	graph = {}
@@ -73,5 +73,3 @@ def restart_node(self):
 		Node_5 = Node(node_destructed, node_holder, node_queue, node_using, node_asked)
 		Node_5.init_queue()
 		print(" [*] Node " + str(node_destructed).encode() + " has been recreated")
-
-
