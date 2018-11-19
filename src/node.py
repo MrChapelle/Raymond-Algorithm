@@ -98,7 +98,7 @@ class Node():
 			print(" [*] I made the request")
 			self.holder = self.number
 			self.asked = False
-			self.using = True
+			self.start_using()
 		else:
 			body = "SEND TOKEN"
 
@@ -154,7 +154,7 @@ class Node():
 							print(" [*] I am using the token since " + str(t) + " seconds")
 							t += 1
 							time.sleep(1)
-						self.using = False
+						self.stop_using()
 						self.send_token(requestor)
 
 				else :
