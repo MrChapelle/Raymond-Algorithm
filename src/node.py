@@ -131,7 +131,7 @@ class Node():
 		connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 		channel    = connection.channel()
 		queue = str(self.get_number())
-		channel.queue_declare(queue = queue)
+		channel.queue_declare(queue = queue, durable = True)
 		print(" [*] Queue " + str(self.get_number()) + " started")
 
 		def callback(ch, method, properties, body):
