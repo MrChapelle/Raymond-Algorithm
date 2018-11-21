@@ -1,7 +1,9 @@
 import pika
 import time
+from restart import *
 
 class Node():
+	instances = []
 	def __init__(self, number, holder, queue = [], using = False, asked = False):
 		self.number = number
 		self.holder = holder
@@ -9,7 +11,12 @@ class Node():
 		self.using  = using 
 		self.asked  = asked
 
+		self.instances.append(self)
+
 #Getters and basic functions-------------------------------------
+	def get_instances(self):
+		return self.instances
+
 	def get_number(self):
 		return self.number
 
@@ -162,6 +169,16 @@ class Node():
 					self.transfer_token_request(requestor)
 			elif body.count("SEND TOKEN".encode()):
 				self.transfer_token()
+			#Ajout Cyril pert
+			elif body.count("DEAD NODE".encode()):
+				self.holder = 0
+				self.number = 3
+				self.asked = False
+				self.queue = []
+				self.using = False
+				list_nodes = self.instances
+				restart_node(list_nodes)
+			#Fin ajout
 			else :
 				print(" [*] Received %r" % body)
 

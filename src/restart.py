@@ -1,12 +1,14 @@
-from node import *
 
-def restart_node():
+def restart_node(list_nodes):
 	# we reconstruct the graph
 	node_destructed = -1
 	graph = {}
 	for node in list_nodes :
+		print("node", node)
 		graph[node.number] = [node.holder, node.queue, node.asked, node.using]
 	# we find the destructed node
+	print(graph)
+	print(list_nodes)
 	list_nodes_alive = []
 	for (key, liste) in graph :
 		if key not in list_nodes_alive :

@@ -18,6 +18,15 @@ channel.basic_publish(exchange='',
                       body=body)
 print(" [*] Sent " + body + " to queue " + str(holder))
 
+#Ajout Cyril pour perte noeud
+perte = "DEAD NODE"
+channel.basic_publish(exchange='',
+                      routing_key=str(3),
+                      body=perte)
+print(" [*] Sent " + perte + " to queue " + str(holder))
+
+#FIn ajout
+
 # time.sleep(10)
 # print("Other request simulation")
 
