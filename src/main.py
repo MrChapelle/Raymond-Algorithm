@@ -18,20 +18,20 @@ channel.basic_publish(exchange='',
                       body=body)
 print(" [*] Sent " + body + " to queue " + str(holder))
 
-time.sleep(10)
-print("Other request simulation")
+# time.sleep(10)
+# print("Other request simulation")
 
-number = 1
-holder = 0
-begin = "REQUEST INIT from node " + str(number)
-body = "REQUEST TOKEN from node " + str(number)
-channel.basic_publish(exchange='',
-                      routing_key=str(number),
-                      body=begin)
-print(" [*] Sent " + begin + " to queue " + str(number))
-channel.basic_publish(exchange='',
-                      routing_key=str(holder),
-                      body=body)
-print(" [*] Sent " + body + " to queue " + str(holder))
+# number = 1
+# holder = 0
+# begin = "REQUEST INIT from node " + str(number)
+# body = "REQUEST TOKEN from node " + str(number)
+# channel.basic_publish(exchange='',
+#                       routing_key=str(number),
+#                       body=begin)
+# print(" [*] Sent " + begin + " to queue " + str(number))
+# channel.basic_publish(exchange='',
+#                       routing_key=str(holder),
+#                       body=body)
+# print(" [*] Sent " + body + " to queue " + str(holder))
 connection.close()
 

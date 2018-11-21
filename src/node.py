@@ -89,9 +89,9 @@ class Node():
 			self.asked = True
 			print(" [*] Message send")
 			print(" [*] My queue :" + str(self.queue))
-			print(" [*] Am I asked ? : " + str(self.asked))
+			print(" [*] Have I asked ? : " + str(self.asked))
 			print(" [*] My holder : " + str(self.holder))
-			print(" [*] Am I using : " + str(self.using))
+			print(" [*] Am I using ? : " + str(self.using))
 
 	def send_token(self, requestor):
 		if self.number == requestor :
@@ -113,9 +113,9 @@ class Node():
 			connection.close()
 		print(" [*] Message send")
 		print(" [*] My queue :" + str(self.queue))
-		print(" [*] Am I asked ? : " + str(self.asked))
+		print(" [*] Have I asked ? : " + str(self.asked))
 		print(" [*] My holder : " + str(self.holder))
-		print(" [*] Am I using : " + str(self.using))
+		print(" [*] Am I using ? : " + str(self.using))
 
 	def transfer_token(self):
 		#print("to implement")
